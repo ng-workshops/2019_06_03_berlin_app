@@ -4,6 +4,7 @@ import {
   OnInit,
   ViewContainerRef
 } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { fadeInAnimation } from './core/animations/fade-in-animation';
 import { SettingsService } from './settings/settings.service';
 import { HostElementService } from './shared/modal/host/host-element.service';
@@ -21,9 +22,12 @@ export class AppComponent implements OnInit {
   constructor(
     private settingsService: SettingsService,
     hostElementService: HostElementService,
-    hostElement: ViewContainerRef
+    hostElement: ViewContainerRef,
+    translate: TranslateService
   ) {
     hostElementService.setHost(hostElement);
+    translate.setDefaultLang('en');
+    translate.use('de');
   }
 
   ngOnInit() {
