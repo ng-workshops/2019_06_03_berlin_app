@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Settings, Theme } from './settings.model';
-import { catchError, tap } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subject, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { Settings, Theme } from './settings.model';
 
 @Injectable({
   providedIn: 'root'
@@ -15,17 +16,29 @@ export class SettingsService {
 
   private readonly ENDPOINT = '/api/settings';
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient, private router: Router) {}
 
   get() {
     return this.httpClient.get<Settings>(this.ENDPOINT);
   }
 
   set(settings: Settings) {
+    if (settings.initialRoute) {
+      this.setRoute(settings.initialRoute);
+    }
+
     return this.httpClient.post<Settings>(this.ENDPOINT, settings).pipe(
       tap(_ => this.themeListener.next(settings.theme)),
       catchError(this.handleError)
     );
+  }
+
+  setDefaultRoute() {
+    this.get().subscribe(settings => {
+      if (settings && settings.initialRoute) {
+        this.setRoute(settings.initialRoute);
+      }
+    });
   }
 
   private handleError(error: HttpErrorResponse) {
@@ -41,5 +54,19 @@ export class SettingsService {
     }
     // return an Error with a user-facing error message
     return throwError('Something bad happened; please try again later.');
+  }
+
+  private setRoute(route?: string) {
+    if (!route) {
+      return;
+    }
+
+    const startRoute = this.router.config.find(
+      r => r.data && r.data.hasDynamicRedirect
+    );
+
+    if (startRoute) {
+      startRoute.redirectTo = route;
+    }
   }
 }

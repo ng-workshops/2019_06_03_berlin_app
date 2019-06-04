@@ -3,7 +3,12 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  {
+    path: '',
+    redirectTo: 'home',
+    pathMatch: 'full',
+    data: { hasDynamicRedirect: true }
+  },
   {
     path: 'settings',
     loadChildren: 'app/settings/settings.module#SettingsModule'

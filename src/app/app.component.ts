@@ -4,6 +4,7 @@ import {
   OnInit,
   ViewContainerRef
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { fadeInAnimation } from './core/animations/fade-in-animation';
 import { SettingsService } from './settings/settings.service';
@@ -23,7 +24,8 @@ export class AppComponent implements OnInit {
     private settingsService: SettingsService,
     hostElementService: HostElementService,
     hostElement: ViewContainerRef,
-    translate: TranslateService
+    translate: TranslateService,
+    private router: Router
   ) {
     hostElementService.setHost(hostElement);
     translate.setDefaultLang('en');
@@ -34,6 +36,8 @@ export class AppComponent implements OnInit {
     this.settingsService.themeChanged$.subscribe(
       theme => (this.currentTheme = theme)
     );
+
+    this.settingsService.setDefaultRoute();
   }
 
   // change the animation state

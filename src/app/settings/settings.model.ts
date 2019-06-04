@@ -1,4 +1,4 @@
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { floatValidator } from '../shared/input-float/float.validator';
 
 function passwordMatchesValidator(form: FormGroup): null {
@@ -21,6 +21,7 @@ export class Settings {
     value: string;
     repeat?: string;
   };
+  initialRoute?: string;
   rights: string[] = [];
   salary: number;
 
@@ -34,6 +35,7 @@ export class Settings {
       {
         theme: formBuilder.control(settings.theme),
         isAdmin: formBuilder.control(settings.isAdmin),
+        initialRoute: formBuilder.control(settings.initialRoute),
         salary: formBuilder.control(settings.salary, floatValidator()),
         password: formBuilder.group({
           value: formBuilder.control(
