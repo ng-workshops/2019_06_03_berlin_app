@@ -36,8 +36,9 @@ export const routes: Routes = [
 
 ```ts
 // import ngx-translate and the http loader
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader, TranslateModule, TranslateCompiler } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 
 @NgModule({
   imports: [
@@ -47,6 +48,11 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
         provide: TranslateLoader,
         useFactory: HttpLoaderFactory,
         deps: [HttpClient]
+      },
+      // compiler configuration
+      compiler: {
+        provide: TranslateCompiler,
+        useClass: TranslateMessageFormatCompiler
       }
     })
   ],
@@ -97,7 +103,7 @@ export class HomeModule {}
 
   <div>
     <span translate>general.lastupdatedAt</span
-    ><span>{{ lastUpdatedAt | date: 'short' }}</span>
+    ><span>{{ lastUpdatedAt | date: 'short':undefined:locale }}</span>
     <p translate [translateParams]="{ days: days }">
       That is {days, plural, =0 {just now} =1 {yesterday} other {{{days
       | number:'1.0-0'}} days ago}}
@@ -126,17 +132,18 @@ export class HomeModule {}
 ## src/app/home/impressum2/impressum2.component.ts
 
 ```ts
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-impressum2',
   templateUrl: './impressum2.component.html',
   styleUrls: ['./impressum2.component.scss']
 })
-export class Impressum2Component {
+export class Impressum2Component implements OnInit {
   private today = new Date();
+  locale: string;
 
   lastUpdatedAt = new Date(2019, 5, 3, 10, 10, 10);
   days =
@@ -147,10 +154,15 @@ export class Impressum2Component {
   };
 
   fromCode$ = this.translate.onLangChange.pipe(
+    tap(event => (this.locale = event.lang)),
     switchMap(() => this.translate.get('impressum.title'))
   );
 
   constructor(private translate: TranslateService) {}
+
+  ngOnInit() {
+    this.locale = this.translate.currentLang;
+  }
 
   useLanguage(language: string) {
     this.translate.use(language);
