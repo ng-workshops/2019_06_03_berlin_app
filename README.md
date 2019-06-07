@@ -115,6 +115,11 @@ https://nrwl.io/nx
 - [license-checker](https://github.com/davglass/license-checker) List licenses of all node modules in the project
 - [npm-check-updates](https://github.com/tjunnone/npm-check-updates) Check all dependencies for updates
 
+### Recursion of Components
+
+- https://netbasal.com/recursion-in-angular-components-1cd636269b12
+- https://www.bennadel.com/blog/3513-playing-with-recursive-components-in-angular-6-1-10.htm
+
 ### Recommended high quality blogs
 
 - https://angular.de
